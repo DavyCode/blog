@@ -110,7 +110,7 @@ Becuase this architecture depended on distributed configuration management it ha
 
 Once in production, we realized we were relying on the cutting edge of three technologies. We had instances of the platform destabilizing at 2:00 AM in the morning in Australia one too many times. It felt like a constant game of whack-a-mole, chasing one stability issue after another. When we upgraded the stack to new versions of Docker, etcd or Fleet; some new issue would pop up.
 
-![Webtasks V1](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_1.1.png)
+![Webtasks V1](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_1.3.png)
 
 ### Stabilizing the platform
 
@@ -127,7 +127,7 @@ In the new model, when a request comes in, the load balancer decides to send it 
 
 At this point the only component of Core OS still in use was Docker. So, we dropped down to vanilla Ubuntu. The process of simplification was a metamorphosis of the stack that resulted in considerable improvements in stability.
 
-![Webtasks V2](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_2.png)
+![Webtasks V2](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_2.1.png)
 
 ### Stabilizing real-time logging
 
@@ -144,7 +144,7 @@ Kafka builds on top of [ZooKeeper](https://zookeeper.apache.org/) for distribute
 
 We started looking for alternatives and landed on [ZeroMQ](http://zeromq.org/). ZeroMQ has no storage involved at all. It is an in-memory system that provides messaging patterns over TCP. ZeroMQ's publish/subscribe pattern allowed the source of logging information to act as a publisher. We could have any number of subscribers providing filtering criteria and receiving messages. One nice feature is if there are no subscribers ZeroMQ merely drops messages on the floor;  which was what we needed for real-time logging.
 
-![Webtasks V3](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_3.png)
+![Webtasks V3](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_3.1.png)
 
 Switching to ZeroMQ was the single most stabilizing change we made in the history of the Webtasks cluster. It was such an impressive improvement Tomasz wrote a [post about it](https://tomasz.janczuk.org/2015/09/from-kafka-to-zeromq-for-log-aggregation.html). That post received 10,000 views the first day it published. Others were apparently having similar issues.
 
