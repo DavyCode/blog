@@ -28,6 +28,8 @@ How did Auth0 get to the point of offering extensibility through a serverless pl
 
 ## The problem we were trying to solve
 
+![NASA Engineers working on MAVEN](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/engineers_working_on_the_high-gain_antenna_of_the_MAVEN_spacecraft.jpg)
+
 In the early days at Auth0, there were two groups: Core and Field Engineering. Core focused on the core functionality of the authentication product, and the field engineers helped customers use the product in their applications. The company was discovering what customers needed in the product.
 
 Our customer's focus was on the authentication transaction. A lot of interesting features can attach to the process of someone trying to login:
@@ -48,6 +50,8 @@ If every interaction with a customer involved identifying an idea, putting it in
 
 ## Custom code extensibility
 
+![NASA engineers working on Webb](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/34827899312_571fa2a976_k.jpg)
+
 The inspiration for custom code extensibility as a solution came from spreadsheets. Excel has significant functionality out of the box, but there is always a function, macro or calculation that is not available. However, you can write them yourself directly in Excel removing the dependency on Microsoft engineers.
 
 > **"We wanted a similar experience for our users. A user should be able to log in to the dashboard, write a small amount of node.js code that executes later during authorization transactions."**<br />
@@ -67,6 +71,8 @@ Although the MVP had its limitations, it proved that the user experience for cus
 
 ## How do you secure execution of untrusted code?
 
+![NASA engineers working on Webb](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/nasa_engineers_conduct_low_light_test.jpg)
+
 > **"When Eugenio and I started talking in August of 2014, this turned out to be my interview question. We have this problem, this is what we want to do, how would you secure it? "**<br />
 > Tomasz Janczuk - Chief Webtasks Architect
 
@@ -77,6 +83,8 @@ The first prototype of the Webtasks architecture was an interview exercise. Exte
 The stabilization effort however was something entirely different. You cannot solve a stabilization problem by adding people to the team. It's a long road of many sleepless nights to build a robust, stable and secure service; it took us several years to arrive on our current solution.
 
 ## Evolving the Webtasks stack
+
+![NASA enginners working on GPM](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/10860353183_307529002e_k.jpg)
 
 ### Creating the platform
 
@@ -128,6 +136,8 @@ Switching to ZeroMQ was the single most stabilizing change we made in the histor
 
 ## Evolving Webtasks features
 
+![NASA engineers cleaning mirror with carbon dioxide snow](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/17402277412_5e2834517c_k.jpg)
+
 ### Feature parity with node sandbox
 
 The first version of Webtasks functionality started as a better equivalent of node sandbox. The execution of custom code took only one HTTP request. The body of that request contained the code to execute.
@@ -159,6 +169,8 @@ A choice was made to keep a prewarmed pool of containers that are immediately re
 There is some overhead in making the assignment compared to a warm request, but it is considerably less than spinning up a new container. It is probably the most distinctive aspect of our platform, and to this day no other serverless provider matches our startup latency.
 
 ## The impact on our sales engineers and customers
+
+![NASA engineers celebrating curiosity](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/celebrating_curiosity.jpg)
 
 Adding extensibility to the product allowed field engineers to say "yes" very often and show those customers a way to accomplish their goals. It opened up a  window of customization where field engineers could work independently from core engineering. They could deliver customizations very quickly without waiting weeks or even days.
 
