@@ -53,34 +53,34 @@ The inspiration for custom code extensibility as a solution came from spreadshee
 > **"We wanted a similar experience for our users. A user should be able to log in to the dashboard, write a small amount of node.js code that executes later during authorization transactions."**<br />
 > Eugenio Pace - Co-Founder, VP Customer Success
 
-Unlike webhooks, this experience does not expose your customer to the necessity of setting up servers to run a service. They can come in write their business logic in the textbox, debug it in place and put it in production. The motivation was keeping it extremely simple.
+Like Excel, we wanted to offer users a really simple experience for customizing our product through code. We believed a user should be able to write their logic in an editor, debug it in place and make it live in production, all without having to stand up a service. This differed from the prevalent approach at the time for dealing with customization through Webhooks, which were hosted by the user.
 
-The earliest MVP of this concept used [node sandbox](https://www.npmjs.com/package/node-sandbox
+We decided to go and implement an MVP of the concept using [node sandbox](https://www.npmjs.com/package/node-sandbox
 ). It was very similar to a CGI model; spinning up a separate node process, send the rule code to execute in it and collecting the result. Execution all happened one process per authorization transaction.
 
-This implementation had some issues, primarily a lack of security. It was merely creating a process boundary between the core Auth0 stack and the customer's code. Node sandbox was primarily preventing well behaved, well-intentioned code from accidentally bringing down the authorization service or other sandboxed code.
+This implementation had some issues, primarily a lack of security. It was merely creating a process boundary between the core Auth0 stack and the customer's code. Node sandbox was primarily preventing well behaved, well-intentioned code from accidentally bringing down the authorization service or other sandboxed code. It was not preventing malicious code from accessing things it should not or corrupting the environment.
 
 > **"It was a very expensive operation to run because each rule would spin up a new process."**<br />
 > Sandrino Di Mattia - Engineering Lead
 
-However, the MVP proved that the customer experience aligned well with our philosophy of "Identity made simple for developers."
+Although the MVP had its limitations, it proved that the user experience for customization could be greatly improved, aligning well with our philosophy of "Identity made simple for developers."
 
 ## How do you secure execution of untrusted code?
 
 > **"When Eugenio and I started talking in August of 2014, this turned out to be my interview question. We have this problem, this is what we want to do, how would you secure it? "**<br />
 > Tomasz Janczuk - Chief Webtask Architect
 
-The initial high-level goal for the Webtask architecture was to create a protocol boundary around the core Auth0 stack and the custom code execution engine and create a multitenant sandbox behind that protocol.
+The answer to that question was a new technology we would create, Webtasks. The initial high-level goal for the Webtasks architecture was to create a protocol boundary around the core Auth0 stack and the custom code execution engine and create a multitenant sandbox behind that protocol.
 
 The first prototype of the Webtask architecture was an interview exercise. Extensibility was a pressing enough problem; it turned into an actual assignment. The implementation was relatively simple; it was a month of work to complete.
 
-The stabilization effort was something entirely different. You cannot solve a stabilization problem by adding people to the team.
+The stabilization effort however was something entirely different. You cannot solve a stabilization problem by adding people to the team. It's a long road of many sleepless nights to build a robust, stable and secure service; it took us several years to arrive on our current solution.
 
-## Evolving the Webtask stack
+## Evolving the Webtasks stack
 
 ### Creating the platform
 
-The first version of Webtask used early versions of [Core OS](https://coreos.com). Core OS at the time used three distinct technologies to provide a platform for creating distributed systems:
+The node sandbox MVP suffered from a lack of isolation, we decided to focus on isolation through container based sandboxing. The first version of Webtasks used early versions of [Core OS](https://coreos.com). Core OS at the time used three distinct technologies to provide a platform for creating distributed systems:
 
 - Docker for OS containerization
 - etcd for distributed configuration management
@@ -92,11 +92,11 @@ This architecture maintained a named container on a single virtual machine withi
 
 Becuase this architecture depended on distributed configuration management it had a higher exposure to failure. Also, add to this the fact that individual virtual machines had a certain probability of failure for random reasons. If a single container only lives on a single virtual machine, there is a single point of failure for that container.
 
-Once in production, we realized we were relying on the cutting edge of three technologies. We had instances of the platform destabilizing at 2:00 AM in the morning in Austraila one too many times. It felt like a constant game of whack-a-mole, chasing one stability issue after another. When we upgraded the stack to new versions of Docker, etcd or Fleet; some new issue would pop up.
+Once in production, we realized we were relying on the cutting edge of three technologies. We had instances of the platform destabilizing at 2:00 AM in the morning in Australia one too many times. It felt like a constant game of whack-a-mole, chasing one stability issue after another. When we upgraded the stack to new versions of Docker, etcd or Fleet; some new issue would pop up.
 
 ### Stabilizing the platform
 
-The focus of version two of Webtask was to simplify the architecture and remove every anything that was not absolutely needed to increase the fault tolerance of the overall system.
+The focus of version two of Webtask was to simplify the architecture and remove everything that was not absolutely needed to increase the fault tolerance of the overall system.
 
 > **"We started with the assumption that the virtual machines should operate entirely independently making them private universes."**<br />
 > Tomasz Janczuk - Chief Webtask Architect
@@ -105,9 +105,9 @@ In terms of container management, the VMs have no business communicating with ea
 
 This change removed the need for etcd because we no longer needed to exchange state between the virtual machines. It also removed the need for Fleet because a named container was allowed to exist on all the virtual machines in the cluster at any given time.
 
-When a request comes in, the load balancer decides to send it to a particular virtual machine. The virtual machine considers that request in complete isolation from the other VMs in the cluster. If the VM needs a container, it provisions it on demand.
+In the new model, when a request comes in, the load balancer decides to send it to a particular virtual machine. The virtual machine considers that request in complete isolation from the other VMs in the cluster. If the VM needs a container, it provisions it on demand.
 
-At this point the only component of Core OS still in use was Docker. So, we dropped down to vanilla Ubuntu. The process of simplification was a metamorphosis of the sack that resulted in considerable improvements in stability.
+At this point the only component of Core OS still in use was Docker. So, we dropped down to vanilla Ubuntu. The process of simplification was a metamorphosis of the stack that resulted in considerable improvements in stability.
 
 ### Stabilizing real-time logging
 
@@ -186,3 +186,5 @@ When [Jeff Lindsay](https://twitter.com/progrium) was introduced to Extend he ce
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 If you are interested in giving it a [try](https://auth0.com/extend/try?umt_source=extend_blog&umt_medium=utility-bar-try&umt_campaign=extend_blog), you can start today for free. Feel free to [contact us](https://auth0.com/extend/#support) if you have any questions.
+
+I would like to thank [Eugenio Pace](https://twitter.com/eugenio_pace), [Sandrino Di Mattia](https://twitter.com/sandrinodm) and [Tomasz Janczuk](https://twitter.com/tjanczuk) for taking time out of their busy schedules to be interviewed for this post.
