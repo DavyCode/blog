@@ -68,11 +68,11 @@ Although the MVP had its limitations, it proved that the user experience for cus
 ## How do you secure execution of untrusted code?
 
 > **"When Eugenio and I started talking in August of 2014, this turned out to be my interview question. We have this problem, this is what we want to do, how would you secure it? "**<br />
-> Tomasz Janczuk - Chief Webtask Architect
+> Tomasz Janczuk - Chief Webtasks Architect
 
 The answer to that question was a new technology we would create, Webtasks. The initial high-level goal for the Webtasks architecture was to create a protocol boundary around the core Auth0 stack and the custom code execution engine and create a multitenant sandbox behind that protocol.
 
-The first prototype of the Webtask architecture was an interview exercise. Extensibility was a pressing enough problem; it turned into an actual assignment. The implementation was relatively simple; it was a month of work to complete.
+The first prototype of the Webtasks architecture was an interview exercise. Extensibility was a pressing enough problem; it turned into an actual assignment. The implementation was relatively simple; it was a month of work to complete.
 
 The stabilization effort however was something entirely different. You cannot solve a stabilization problem by adding people to the team. It's a long road of many sleepless nights to build a robust, stable and secure service; it took us several years to arrive on our current solution.
 
@@ -96,10 +96,10 @@ Once in production, we realized we were relying on the cutting edge of three tec
 
 ### Stabilizing the platform
 
-The focus of version two of Webtask was to simplify the architecture and remove everything that was not absolutely needed to increase the fault tolerance of the overall system.
+The focus of version two of Webtasks was to simplify the architecture and remove everything that was not absolutely needed to increase the fault tolerance of the overall system.
 
 > **"We started with the assumption that the virtual machines should operate entirely independently making them private universes."**<br />
-> Tomasz Janczuk - Chief Webtask Architect
+> Tomasz Janczuk - Chief Webtasks Architect
 
 In terms of container management, the VMs have no business communicating with each other for anything but non-critical functionality like real-time logging.
 
@@ -111,28 +111,28 @@ At this point the only component of Core OS still in use was Docker. So, we drop
 
 ### Stabilizing real-time logging
 
-The third change to the Webtask stack focused on real-time logs. To this day it is the only feature in the Webtasks architecture that requires virtual machines to be aware of each other's existence.
+The third change to the Webtasks stack focused on real-time logs. To this day it is the only feature in the Webtasks architecture that requires virtual machines to be aware of each other's existence.
 
 Real-time logs work by consolidating logging information into a single point. A client makes a management API request providing filtering information. Regardless of the virtual machine in the cluster that the client attaches to, it collects the real-time logging information from all other VMs and streams it back to the client on the HTTP response.
 
 The original implementation of this used [Kafka](https://kafka.apache.org/). Kafka is a very high throughput message broker optimized for log aggregation scenarios. There are many success stories from places like Netflix using it.
 
 > **"At the same time there was certainly some blood on the street with Kafka. There were some horror stories around management and so on."**<br />
-> Tomasz Janczuk - Chief Webtask Architect
+> Tomasz Janczuk - Chief Webtasks Architect
 
 Kafka builds on top of [ZooKeeper](https://zookeeper.apache.org/) for distributed configuration management, similar to how Core OS uses etcd. It turned out, at the time, ZooKeeper had a few skeletons in the closet regarding stability. The Kafka ZooKeeper components were destabilizing enough to cause virtual machine failures. As with etcd, tracking down the issues was never-ending after three months.
 
 We started looking for alternatives and landed on [ZeroMQ](http://zeromq.org/). ZeroMQ has no storage involved at all. It is an in-memory system that provides messaging patterns over TCP. ZeroMQ's publish/subscribe pattern allowed the source of logging information to act as a publisher. We could have any number of subscribers providing filtering criteria and receiving messages. One nice feature is if there are no subscribers ZeroMQ merely drops messages on the floor;  which was what we needed for real-time logging.
 
-Switching to ZeroMQ was the single most stabilizing change we made in the history of the Webtask cluster. It was such an impressive improvement Tomasz wrote a [post about it](https://tomasz.janczuk.org/2015/09/from-kafka-to-zeromq-for-log-aggregation.html). That post received 10,000 views the first day it published. Others were apparently having similar issues.
+Switching to ZeroMQ was the single most stabilizing change we made in the history of the Webtasks cluster. It was such an impressive improvement Tomasz wrote a [post about it](https://tomasz.janczuk.org/2015/09/from-kafka-to-zeromq-for-log-aggregation.html). That post received 10,000 views the first day it published. Others were apparently having similar issues.
 
-## Evolving Webtask features
+## Evolving Webtasks features
 
 ### Feature parity with node sandbox
 
 The first version of Webtasks functionality started as a better equivalent of node sandbox. The execution of custom code took only one HTTP request. The body of that request contained the code to execute.
 
-When a new authorization request comes in the code authored by the customer is bundled up along with contextual information like the user object and request headers. This bundle is sent to the execution engine for execution. In this model, the Webtask cluster is entirely stateless and unaware of any notion of code being stored anywhere.
+When a new authorization request comes in the code authored by the customer is bundled up along with contextual information like the user object and request headers. This bundle is sent to the execution engine for execution. In this model, the Webtasks cluster is entirely stateless and unaware of any notion of code being stored anywhere.
 
 Compared to the node sandbox model which was like CGI creating a new process for every request. This version of Webtasks and the way it was used was like FastCGI. We were still sending the code to execute every request, but the process persisted across many requests. This enhancement saved considerable time recreating the process.
 
@@ -152,7 +152,7 @@ Auth0 is in a unique position from other FaaS providers in that our code execute
 Another aspect is customers who need to execute webtasks infrequently. Think of the typical authentication scenario; users come to work and log in then are done for the rest of the day. Users who come in later very frequently encounter a situation where our stack is cold.
 
 > **"We put considerable effort into finding ways to optimize webtask startup latency, so it does not take seconds as Lambda takes from time to time unpredictably. This latency would reflect poorly on the end user experience."**<br />
-> Tomasz Janczuk - Chief Webtask Architect
+> Tomasz Janczuk - Chief Webtasks Architect
 
 A choice was made to keep a prewarmed pool of containers that are immediately ready to execute webtasks. When a request comes in, one that has not been seen in a while, the Webtasks platform picks a container that is already running from a pool of unassigned containers and reverse proxies that request to it. 
 
@@ -176,7 +176,7 @@ For more examples, take a look at our [rules repository](https://github.com/auth
 
 ## Summary
 
-Serverless Extensibility is a logical extension to Webhooks. It has taken us four years of experimentation and refinement, and the resulting Webtask platform is a success that empowers our field engineers to close deals, simplifies our core architecture and delights our customers.
+Serverless Extensibility is a logical extension to Webhooks. It has taken us four years of experimentation and refinement, and the resulting Webtasks platform is a success that empowers our field engineers to close deals, simplifies our core architecture and delights our customers.
 
 We have created a product call [Auth0 Extend](https://auth0.com/extend/) based on the pattern that allows other SaaS companies to offer it from their products quickly.
 
