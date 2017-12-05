@@ -110,6 +110,8 @@ Becuase this architecture depended on distributed configuration management it ha
 
 Once in production, we realized we were relying on the cutting edge of three technologies. We had instances of the platform destabilizing at 2:00 AM in the morning in Australia one too many times. It felt like a constant game of whack-a-mole, chasing one stability issue after another. When we upgraded the stack to new versions of Docker, etcd or Fleet; some new issue would pop up.
 
+![Webtasks V1](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_1.1.png)
+
 ### Stabilizing the platform
 
 The focus of version two of Webtasks was to simplify the architecture and remove everything that was not absolutely needed to increase the fault tolerance of the overall system.
@@ -125,6 +127,8 @@ In the new model, when a request comes in, the load balancer decides to send it 
 
 At this point the only component of Core OS still in use was Docker. So, we dropped down to vanilla Ubuntu. The process of simplification was a metamorphosis of the stack that resulted in considerable improvements in stability.
 
+![Webtasks V2](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_2.png)
+
 ### Stabilizing real-time logging
 
 The third change to the Webtasks stack focused on real-time logs. To this day it is the only feature in the Webtasks architecture that requires virtual machines to be aware of each other's existence.
@@ -139,6 +143,8 @@ The original implementation of this used [Kafka](https://kafka.apache.org/). Kaf
 Kafka builds on top of [ZooKeeper](https://zookeeper.apache.org/) for distributed configuration management, similar to how Core OS uses etcd. It turned out, at the time, ZooKeeper had a few skeletons in the closet regarding stability. The Kafka ZooKeeper components were destabilizing enough to cause virtual machine failures. As with etcd, tracking down the issues was never-ending after three months.
 
 We started looking for alternatives and landed on [ZeroMQ](http://zeromq.org/). ZeroMQ has no storage involved at all. It is an in-memory system that provides messaging patterns over TCP. ZeroMQ's publish/subscribe pattern allowed the source of logging information to act as a publisher. We could have any number of subscribers providing filtering criteria and receiving messages. One nice feature is if there are no subscribers ZeroMQ merely drops messages on the floor;  which was what we needed for real-time logging.
+
+![Webtasks V3](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_3.png)
 
 Switching to ZeroMQ was the single most stabilizing change we made in the history of the Webtasks cluster. It was such an impressive improvement Tomasz wrote a [post about it](https://tomasz.janczuk.org/2015/09/from-kafka-to-zeromq-for-log-aggregation.html). That post received 10,000 views the first day it published. Others were apparently having similar issues.
 
