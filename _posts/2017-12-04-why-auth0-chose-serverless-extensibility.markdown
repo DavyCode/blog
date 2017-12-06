@@ -177,12 +177,17 @@ The next functional change in Webtasks was a move from a pure sandbox model to a
 
 This change was a more traditional model bringing it conceptually in line with other FaaS providers like Lamda. Named webtasks had an advantage in allowing the system to optimize compilation of the code once and execute over and over. It also freed up the body of the request sent to the webtask making it much more useful for a large number of scenarios.
 
-Reciently, we released a beta called **[Auth0 Hooks](https://auth0.com/docs/hooks)** that takes advantage of named webtasks. Hooks allow you to customize the behavior of Auth0 using custom code that is executed against several extensibility points. Not only can you introduce customization during the client credentials exchange, but also pre and post user registration. Hooks also take advantage of a more feature rich editor.
+Recently, we released a beta called **[Auth0 Hooks](https://auth0.com/docs/hooks)** that takes advantage of named webtasks. Hooks allow you to customize the behavior of Auth0 using custom code that is executed against several extensibility points. Not only can you introduce customization during the client credentials exchange, but also pre and post user registration. Hooks also take advantage of a more feature rich editor.
 
 ![Hooks UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/hooks.png)
 
 Hooks are intended to completely replace Auth0 Rules.
 
+While both Auth0 Rules and Hooks give you fine-grained control of the authentication pipeline, **[Auth0 Extensions](https://auth0.com/docs/extensions)** are mini-applications that extend the Auth0 identity product with 3rd party integrations. They do not directly tie to any specific event in the system. Each Extension can deploy Hooks or Rules on installation and even have associated UI.
+
+![Extensions UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/extensions.png)
+
+Auth0 Extensions are written using the Webtasks infrastructure, but 3rd party Extensions can also be mini-applications hosted in Heroku. Customers can select an Extension from our gallery and provide a set of configuration options to begin using one.
 ### Focus on startup latency
 
 Auth0 is in a unique position from other FaaS providers in that our code executes in the UI path. With each execution, a user is sitting at a login dialog and watching a spinner spin. There is a brief window of time that we have to execute all webtasks.
