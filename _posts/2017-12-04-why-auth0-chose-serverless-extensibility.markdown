@@ -24,7 +24,7 @@ related:
 ---
 Previously, we wrote about the emerging pattern of [Serverless Extensibility](https://auth0.com/blog/why-is-serverless-extensibility-better-than-webhooks/). Examples of the concept are popping up in many of the services you use daily like [Twilio](https://www.twilio.com/functions) and here at [Auth0](https://auth0.com/).
 
-How did Auth0 get to the point of offering extensibility through a serverless platform? It has been a four-year journey that predates both [Amazon Lambda](https://aws.amazon.com/lambda/) and the term Serverless. Like all innovation, it starts with resource constraints, the need to give customers the features they wanted and making sales.
+How did Auth0 get to the point of offering extensibility through a serverless platform? While not rocket science, it has been a four-year journey that predates both [Amazon Lambda](https://aws.amazon.com/lambda/) and the term Serverless. Like all innovation, it starts with resource constraints, the need to give customers the features they wanted and making sales.
 
 ## The problem we were trying to solve
 
@@ -49,6 +49,8 @@ Moreover, sometimes building features into the core product for customers is not
 > Eugenio Pace - Co-Founder, VP Customer Success
 
 If every interaction with a customer involved identifying an idea, putting it in the backlog and coming back to them at a later date, it would add friction to the process and turn customers away.
+
+We had customers who wanted to do profile enrichment. They use services like [FullContact](https://www.fullcontact.com/) to look up a new user and grab related information about them such as their company, role, and social media accounts. FullContact is just one service as there are several others. We had prospects that were depending on these capabilities to have confidence in using us as a platform, and without it would not become customers.
 
 ## Custom code extensibility
 
