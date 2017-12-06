@@ -22,7 +22,7 @@ related:
   - 2017-05-19-serverless-webhooks-with-auth0-extend
   - 2017-08-22-for-the-best-security-think-beyond-webhooks
 ---
-Previously, we wrote about the emerging pattern of [Serverless Extensibility](https://auth0.com/blog/why-is-serverless-extensibility-better-than-webhooks/). Examples of the concept are popping up in many of the services you use daily like [Twilio](https://www.twilio.com/functions), [Stamplay](https://stamplay.com/) and here at [Auth0](https://auth0.com/).
+Previously, we wrote about the emerging pattern of [Serverless Extensibility](https://auth0.com/blog/why-is-serverless-extensibility-better-than-webhooks/). Examples of the concept are popping up in many of the services you use daily like [Twilio](https://www.twilio.com/functions) and here at [Auth0](https://auth0.com/).
 
 How did Auth0 get to the point of offering extensibility through a serverless platform? It has been a four-year journey that predates both [Amazon Lambda](https://aws.amazon.com/lambda/) and the term Serverless. Like all innovation, it starts with resource constraints, the need to give customers the features they wanted and making sales.
 
@@ -43,7 +43,7 @@ Our customer's focus was on the authentication transaction. A lot of interesting
 
 The possibilities are endless. We could not possibly build every feature at once.
 
-Moreover, sometimes building features into the core product for customers is not the right idea. We needed a way to try ideas out. An idea may sound great, but in practice be problematic. Investing core engineering resources to these ideas is very expensive.
+Moreover, sometimes building features into the core product for customers is not the right approach. We needed a way to try ideas out. An idea may sound great, but in practice be problematic. Investing core engineering resources to these ideas is very expensive.
 
 > **"The primary use case for extensibility at Auth0 was to empower field engineers to work on the last mile solutions for the customer without involving core engineering."**<br />
 > Eugenio Pace - Co-Founder, VP Customer Success
@@ -61,10 +61,10 @@ The inspiration for custom code extensibility as a solution came from spreadshee
 > **"We wanted a similar experience for our users. A user should be able to log in to the dashboard, write a small amount of node.js code that executes later during authorization transactions."**<br />
 > Eugenio Pace - Co-Founder, VP Customer Success
 
-Like Excel, we wanted to offer users a really simple experience for customizing our product through code. We believed a user should be able to write their logic in an editor, debug it in place and make it live in production, all without having to stand up a service. This differed from the prevalent approach at the time for dealing with customization through Webhooks, which were hosted by the user.
+Like Excel, we wanted to offer users a really simple experience for customizing our product through code. We believed a user should be able to write their logic in an editor, debug it in place and make it live in production, all without having to stand up a service. This differed from the prevalent approach at the time for dealing with customization through webhooks, which were hosted by the user.
 
 We decided to go and implement an MVP of the concept using [node sandbox](https://www.npmjs.com/package/node-sandbox
-). It was very similar to a CGI model; spinning up a separate node process, send the rule code to execute in it and collecting the result. Execution all happened one process per authorization transaction.
+). It was very similar to a CGI model; spinning up a separate node process, sending the custom code to execute in it and collecting the result. Every custom code execution was using a dedicated system process, which was resource intensive.
 
 This implementation had some issues, primarily a lack of security. It was merely creating a process boundary between the core Auth0 stack and the customer's code. Node sandbox was primarily preventing well behaved, well-intentioned code from accidentally bringing down the authorization service or other sandboxed code. It was not preventing malicious code from accessing things it should not or corrupting the environment.
 
@@ -96,9 +96,9 @@ The stabilization effort however was something entirely different. You cannot so
 
 ### Creating the platform
 
-The node sandbox MVP suffered from a lack of isolation, we decided to focus on isolation through container based sandboxing. The first version of Webtasks used early versions of [Core OS](https://coreos.com). Core OS at the time used three distinct technologies to provide a platform for creating distributed systems:
+The node sandbox MVP suffered from a lack of isolation between our various customer's code, we decided to focus on isolation through container based sandboxing. The first version of Webtasks used early versions of [Core OS](https://coreos.com). Core OS at the time used three distinct technologies to provide a platform for creating distributed systems:
 
-- Docker for OS containerization
+- Docker for managing containers
 - etcd for distributed configuration management
 - Fleet for distributed service management
 
@@ -123,7 +123,7 @@ In terms of container management, the VMs have no business communicating with ea
 
 This change removed the need for etcd because we no longer needed to exchange state between the virtual machines. It also removed the need for Fleet because a named container was allowed to exist on all the virtual machines in the cluster at any given time.
 
-In the new model, when a request comes in, the load balancer decides to send it to a particular virtual machine. The virtual machine considers that request in complete isolation from the other VMs in the cluster. If the VM needs a container, it provisions it on demand.
+In the new model, when a request comes in, the load balancer decides to send it to a particular virtual machine. The virtual machine considers that request in complete isolation from the other VMs in the cluster. If the VM needs a container, it picks a new container from a pool of pre-created, unassigned containers on that VM.
 
 At this point the only component of Core OS still in use was Docker. So, we dropped down to vanilla Ubuntu. The process of simplification was a metamorphosis of the stack that resulted in considerable improvements in stability.
 
@@ -142,7 +142,7 @@ The original implementation of this used [Kafka](https://kafka.apache.org/). Kaf
 
 Kafka builds on top of [ZooKeeper](https://zookeeper.apache.org/) for distributed configuration management, similar to how Core OS uses etcd. It turned out, at the time, ZooKeeper had a few skeletons in the closet regarding stability. The Kafka ZooKeeper components were destabilizing enough to cause virtual machine failures. As with etcd, tracking down the issues was never-ending after three months.
 
-We started looking for alternatives and landed on [ZeroMQ](http://zeromq.org/). ZeroMQ has no storage involved at all. It is an in-memory system that provides messaging patterns over TCP. ZeroMQ's publish/subscribe pattern allowed the source of logging information to act as a publisher. We could have any number of subscribers providing filtering criteria and receiving messages. One nice feature is if there are no subscribers ZeroMQ merely drops messages on the floor;  which was what we needed for real-time logging.
+We started looking for alternatives and landed on [ZeroMQ](http://zeromq.org/). ZeroMQ has no storage involved at all. It is an in-memory system that provides messaging patterns over TCP. ZeroMQ's publish/subscribe pattern allowed the source of logging information to act as a publisher. We could have any number of subscribers providing filtering criteria and receiving messages. One nice feature is of ZeroMQ is it is stateless and does not require any storage, which helps with reliability. This was exactly what we needed for real-time logging.
 
 ![Webtasks V3](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/version_3.1.png)
 
@@ -160,29 +160,29 @@ The first version of Webtasks functionality started as a better equivalent of no
 
 When a new authorization request comes in the code authored by the customer is bundled up along with contextual information like the user object and request headers. This bundle is sent to the execution engine for execution. In this model, the Webtasks cluster is entirely stateless and unaware of any notion of code being stored anywhere.
 
-Compared to the node sandbox model which was like CGI creating a new process for every request. This version of Webtasks and the way it was used was like FastCGI. We were still sending the code to execute every request, but the process persisted across many requests. This enhancement saved considerable time recreating the process.
+Another improvement the Webtasks implementation realized compared to node sandbox approach was the reuse of the system process across several rule executions of the same tenant. Compared to the node sandbox model which was like CGI creating a new process for every request. This version of Webtasks and the way it was used was like FastCGI. We were still sending the code to execute every request, but the process persisted across many requests. This enhancement saved considerable time recreating the process.
 
-### Moving to pre-provisioning
+### Moving to named webtasks
 
-The next functional change in Webtasks was a move from a pure sandbox model to a pre-provisioned model. We created a set of management APIs that allowed the creation of a webtask that could then be invoked separately.
+The next functional change in Webtasks was a move from a pure sandbox model to a named webtask model. We created a set of management APIs that allowed the creation of a webtask that could then be invoked separately.
 
-> **"Imagine our biggest customers having thousands of logins per second. Performancewise instead of having to send up to 100kb of code, directly sending the request to a webtask and getting a response back dramatically increased throughput."**<br />
+> **"Imagine our biggest customers having thousands of logins per second. Performance-wise instead of having to send up to 100kb of code, directly sending the request to a webtask and getting a response back dramatically increased throughput."**<br />
 > Sandrino Di Mattia - Engineering Lead
 
-This change was a more traditional model bringing it conceptually in line with other FaaS providers like Lamda. Pre-provisioning had an advantage in allowing the system to optimize compilation of the code once and execute over and over. It also freed up the body of the request sent to the webtask making it much more useful for a large number of scenarios.
+This change was a more traditional model bringing it conceptually in line with other FaaS providers like Lamda. Named webtasks had an advantage in allowing the system to optimize compilation of the code once and execute over and over. It also freed up the body of the request sent to the webtask making it much more useful for a large number of scenarios.
 
 ### Focus on startup latency
 
 Auth0 is in a unique position from other FaaS providers in that our code executes in the UI path. With each execution, a user is sitting at a login dialog and watching a spinner spin. There is a brief window of time that we have to execute all webtasks.
 
-Another aspect is customers who need to execute webtasks infrequently. Think of the typical authentication scenario; users come to work and log in then are done for the rest of the day. Users who come in later very frequently encounter a situation where our stack is cold.
+Auth0 is also a highly multi-tenant platform. Some customers need to execute webtasks infrequently. A typical authentication scenario for them would be users come to work and log in then are done for the rest of the day. Since custom code must execute in isolation of rules for other customers, these users who come in later very frequently encounter a situation where our stack is cold.
 
-> **"We put considerable effort into finding ways to optimize webtask startup latency, so it does not take seconds as Lambda takes from time to time unpredictably. This latency would reflect poorly on the end user experience."**<br />
+> **"We have put considerable effort into optimizing webtask execution latency so that it is predictably low, regardless if the stack is warm or cold. Unpredictable or high latency would reflect poorly on the end user experience."**<br />
 > Tomasz Janczuk - Chief Webtasks Architect
 
-A choice was made to keep a prewarmed pool of containers that are immediately ready to execute webtasks. When a request comes in, one that has not been seen in a while, the Webtasks platform picks a container that is already running from a pool of unassigned containers and reverse proxies that request to it. 
+A choice was made to keep a pre-warmed pool of containers that are immediately ready to execute webtasks. When a request comes in execute code on behalf of a customer that has not been seen in a while, the Webtasks platform picks a container that is already running from a pool of unassigned containers and reverse proxies that request to it.
 
-There is some overhead in making the assignment compared to a warm request, but it is considerably less than spinning up a new container. It is probably the most distinctive aspect of our platform, and to this day no other serverless provider matches our startup latency.
+There is some overhead in making the assignment compared to a warm request, but it is considerably less than spinning up a new container. It is probably the most distinctive aspect of our platform allowing us to provide a low variance of latency between requests, regardless if they are warm or old; offering a high degree of predictability.
 
 ## The impact on our sales engineers and customers
 
@@ -190,7 +190,7 @@ There is some overhead in making the assignment compared to a warm request, but 
 
 *Placed into the public domain by [NASA](https://commons.wikimedia.org/wiki/File:Celebrating_Curiosity.jpg) using [Creative Commons](https://creativecommons.org/publicdomain/zero/1.0/)*
 
-Adding extensibility to the product allowed field engineers to say "yes" very often and show those customers a way to accomplish their goals. It opened up a  window of customization where field engineers could work independently from core engineering. They could deliver customizations very quickly without waiting weeks or even days.
+Adding extensibility to the identity product opened up a window of customization where field engineers could work independently from core engineering. They could deliver customizations very quickly without waiting weeks or even days, enabling many successful sales engagements.
 
 > **"In some cases, we were able to deliver demos where we implemented feature requests in the demo during the meeting. It was amazing for field engineers and our customers."**<br />
 > Eugenio Pace - Co-Founder, VP Customer Success
@@ -206,9 +206,9 @@ For more examples, take a look at our [rules repository](https://github.com/auth
 
 ## Summary
 
-Serverless Extensibility is a logical extension to Webhooks. It has taken us four years of experimentation and refinement, and the resulting Webtasks platform is a success that empowers our field engineers to close deals, simplifies our core architecture and delights our customers.
+Serverless Extensibility is a logical evolution to Webhooks. It has taken us four years of experimentation and refinement, and the resulting Webtasks platform is a success that empowers our field engineers to close deals, simplifies our core architecture and delight our customers.
 
-We have created a product call [Auth0 Extend](https://auth0.com/extend/) based on the pattern that allows other SaaS companies to offer it from their products quickly.
+We have created a product called [Auth0 Extend](https://auth0.com/extend/) based on the pattern that allows other SaaS companies to offer serverless extensibility from their products quickly.
 
 When [Jeff Lindsay](https://twitter.com/progrium) was introduced to Extend he certainly felt we were on to something. Jeff was the person who coined the phrase [Webhook](http://progrium.com/blog/2007/05/03/web-hooks-to-revolutionize-the-web/), which has become ubiquitous on the web as a way to offer extension points from applications online.
 
