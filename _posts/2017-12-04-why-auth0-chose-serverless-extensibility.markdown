@@ -162,6 +162,12 @@ When a new authorization request comes in the code authored by the customer is b
 
 Another improvement the Webtasks implementation realized compared to node sandbox approach was the reuse of the system process across several rule executions of the same tenant. Compared to the node sandbox model which was like CGI creating a new process for every request. This version of Webtasks and the way it was used was like FastCGI. We were still sending the code to execute every request, but the process persisted across many requests. This enhancement saved considerable time recreating the process.
 
+[Auth0 Rules]()https://auth0.com/docs/rules/current were successfully implemented using this version of the Webtasks architecture. Rules were the first publically available use case where our customers could easily add custom functionality to their authorization flow directly in the dashboard. A customer clicks a button to add a new Rule, select one from a set of standard templates which they can customize with a simple editor right in their browser. When saved, the Rule is active on their account for all authentication requests. Rules execute after authentication but before authorization.
+
+![Rules UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/rules.png)
+
+Rules allow you to easily customize and extend Auth0's capabilities. They can be chained together for modular coding and can be turned on and off individually.
+
 ### Moving to named webtasks
 
 The next functional change in Webtasks was a move from a pure sandbox model to a named webtask model. We created a set of management APIs that allowed the creation of a webtask that could then be invoked separately.
@@ -170,6 +176,12 @@ The next functional change in Webtasks was a move from a pure sandbox model to a
 > Sandrino Di Mattia - Engineering Lead
 
 This change was a more traditional model bringing it conceptually in line with other FaaS providers like Lamda. Named webtasks had an advantage in allowing the system to optimize compilation of the code once and execute over and over. It also freed up the body of the request sent to the webtask making it much more useful for a large number of scenarios.
+
+Reciently, we released a beta called Auth0 Hooks that takes advantage of named webtasks. Hooks allow you to customize the behavior of Auth0 using custom code that is executed against several extensibility points. Not only can you introduce customization during the client credentials exchange, but also pre and post user registration. Hooks also take advantage of a more feature rich editor.
+
+![Hooks UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/hooks.png)
+
+Hooks are intended to completely replace Auth0 Rules.
 
 ### Focus on startup latency
 
