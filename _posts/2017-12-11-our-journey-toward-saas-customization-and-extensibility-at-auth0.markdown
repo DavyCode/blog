@@ -123,7 +123,11 @@ For more examples, take a look at our [rules repository](https://github.com/auth
 
 ## The impact on our business
 
+![Happy Employees](https://cdn.auth0.com/website/careers/culture-2.jpg)
+
 Not only did we make our customers happier, opening up customization provided us a direct return on revenue. Looking at our data, we found our customer retention increased up to 10x for those users that took advantage of customizing. Not only that, but our largest deals depend on these customizations even today, which is 70% of our cloud revenue.
+
+It is a level of success that makes us feel like rocket scientists sometimes. We are pretty sure that empowering our customers will help us land on Mars shortly.
 
 ## Summary
 
