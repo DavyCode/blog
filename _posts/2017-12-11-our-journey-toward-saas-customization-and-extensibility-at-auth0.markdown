@@ -2,7 +2,7 @@
 layout: post_extend
 title: "Our Journey toward SaaS Customization and Extensibility at Auth0"
 description: ""
-date: 2017-12-04 10:19
+date: 2017-12-11 10:00
 category: Extend, Business
 author:
   name: "Bobby Johnson"
@@ -50,7 +50,7 @@ Moreover, sometimes building features into the core product for customers is not
 
 If every interaction with a customer involved identifying an idea, putting it in the backlog and coming back to them at a later date, it would add friction to the process and turn customers away.
 
-We had customers who wanted to do profile enrichment. They use services like [FullContact](https://www.fullcontact.com/) to look up a new user and grab related information about them such as their company, role, and social media accounts. FullContact is just one service as there are several others. We had prospects that were depending on these capabilities to have confidence in using us as a platform, and without it would not become customers.
+For example, we had customers who wanted to do profile enrichment. They used services like [FullContact](https://www.fullcontact.com/) to look up a new user and grab related information about them such as their company, role, and social media accounts. FullContact is just one service as there are several others. We had prospects that were depending on these capabilities to have confidence in using us as a platform, and without it would not become customers.
 
 ## Custom code extensibility
 
@@ -63,35 +63,43 @@ The inspiration for custom code extensibility as a solution came from spreadshee
 > **"We wanted a similar experience for our users. A user should be able to log in to the dashboard, write a small amount of node.js code that executes later during authorization transactions."**<br />
 > Eugenio Pace - Co-Founder, VP Customer Success
 
-Like Excel, we wanted to offer users a really simple experience for customizing our product through code. We believed a user should be able to write their logic in an editor, debug it in place and make it live in production, all without having to stand up a service. This differed from the prevalent approach at the time for dealing with customization through webhooks, which were hosted by the user.
+Like Excel, we wanted to offer users a really simple experience for customizing our product through code. We believed a user should be able to write their logic in an editor, debug it in place, and make it live in production, all without having to stand up a service. This differed from the prevalent approach at the time for dealing with customization through webhooks, which were hosted by the user.
 
 We quickly implemeted an MVP that had some issues, primarily a lack of security. It was merely creating a process boundary between the core Auth0 stack and the customer's code. It primarily prevented well behaved, well-intentioned code from accidentally bringing down the authorization service or other sandboxed code. It was not preventing malicious code from accessing things it should not or corrupting the environment.
 
 Although the MVP had its limitations, it proved that the user experience for customization could be greatly improved, aligning well with our philosophy of "Identity made simple for developers."
 
-## Evolving Webtasks features
+## Evolving customization features
 
 ![NASA engineers cleaning mirror with carbon dioxide snow](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/17402277412_5e2834517c_k.jpg)
 
 *[NASA](https://www.flickr.com/photos/gsfc/17402277412) licensed under [Creative Commons 2.0](https://creativecommons.org/licenses/by/2.0/)*
 
-**[Auth0 Rules](https://auth0.com/docs/rules/current)** were were the first publically available use case where our customers could easily add custom functionality to their authorization flow directly in the dashboard. A customer clicks a button to add a new Rule, select one from a set of standard templates which they can customize with a simple editor right in their browser. When saved, the Rule is active on their account for all authentication requests. Rules execute after authentication but before authorization.
+**[Auth0 Rules](https://auth0.com/docs/rules/current)** were the first publically available use case where our customers could easily add custom functionality to their authorization flow directly in the dashboard. Rules execute after authentication but before authorization. We offer a gallery of Rule templates that make it easy for customers to address common scenarios out of the box. Because Rules are code though, customers can easily customize the logic further to meet their specific needs.
+
+A customer clicks a button to add a new Rule, selects one from a set of standard templates which they can customize with a simple editor right in their browser. When saved, the Rule is active on their account for all authentication requests.
 
 ![Rules UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/rules.png)
 
 Rules allow you to easily customize and extend Auth0's capabilities. They can be chained together for modular coding and can be turned on and off individually.
 
-Recently, we released a beta called **[Auth0 Hooks](https://auth0.com/docs/hooks)** that takes advantage of named webtasks. Hooks allow you to customize the behavior of Auth0 using custom code that is executed against several extensibility points. Not only can you introduce customization during the client credentials exchange, but also pre and post user registration. Hooks also take advantage of a more feature rich editor.
+Rules were really powerful but were limited only to login. Once customers got a taste of rules, they started to ask us for more places where they can customize the product, and so Hooks were born.
+
+**[Auth0 Hooks](https://auth0.com/docs/hooks)** allow you to customize the behavior of Auth0 using custom code that is executed against several extensibility points. Not only can you introduce customization during the client credentials exchange, but also pre and post user registration. Hooks also take advantage of a more feature rich editor.
 
 ![Hooks UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/hooks.png)
 
 Hooks are intended to completely replace Auth0 Rules.
 
-While both Auth0 Rules and Hooks give you fine-grained control of the authentication pipeline, **[Auth0 Extensions](https://auth0.com/docs/extensions)** are mini-applications that extend the Auth0 identity product with 3rd party integrations. They do not directly tie to any specific event in the system. Each Extension can deploy Hooks or Rules on installation and even have associated UI.
+While both Auth0 Rules and Hooks give you fine-grained control of the authentication pipeline, **[Auth0 Extensions](https://auth0.com/docs/extensions)** are are mini-applications that extend the Auth0 identity product with 3rd party integrations.
+
+They do not directly tie to any specific event in the system. Instead, they can invoke any Auth0 API, can configure the customer tenant, deploy Hooks or Rules on installation and even have an associated user interface. They are extremely powerful and opened up many use cases.
 
 ![Extensions UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/extensions.png)
 
 Auth0 Extensions are written using the Webtasks infrastructure, but 3rd party Extensions can also be mini-applications hosted in Heroku. Customers can select an Extension from our gallery and provide a set of configuration options to begin using one.
+
+This is just the beginning. We're constantly looking to enable richer and richer customization in our product, and you'll continue to see us opening new doors as we learn.
 
 ## The impact on our sales engineers and customers
 
@@ -112,6 +120,10 @@ For more examples, take a look at our [rules repository](https://github.com/auth
 
 > **"Every event in the life cycle of the user can be expressed through code and in that way we can support any backend out there in a flash. No matter how customers encrypt or hash passwords; whatever they do is supported because they can provide the details using custom code."**<br />
 > Sandrino Di Mattia - Engineering Lead
+
+## The impact on our business
+
+Not only did we make our customers happier, opening up customization provided us a direct return on revenue. Looking at our data, we found our customer retention increased up to 10x for those users that took advantage of customizing. Not only that, but our largest deals depend on these customizations even today, which is 70% of our cloud revenue.
 
 ## Summary
 
