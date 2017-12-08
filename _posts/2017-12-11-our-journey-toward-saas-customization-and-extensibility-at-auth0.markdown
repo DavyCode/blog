@@ -100,7 +100,7 @@ They do not directly tie to any specific event in the system. Instead, they can 
 
 ![Extensions UI](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/extensions.png)
 
-Auth0 Extensions are written using the Webtasks infrastructure, but 3rd party Extensions can also be mini-applications hosted in Heroku. Customers can select an Extension from our gallery and provide a set of configuration options to begin using one.
+Auth0 Extensions are written using the Webtasks infrastructure. Customers can select an Extension from our gallery and provide a set of configuration options to begin using one.
 
 This is just the beginning. We're constantly looking to enable richer and richer customization in our product, and you'll continue to see us opening new doors as we learn.
 
