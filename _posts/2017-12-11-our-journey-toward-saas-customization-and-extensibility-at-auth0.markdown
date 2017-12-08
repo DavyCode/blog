@@ -1,7 +1,7 @@
 ---
 layout: post_extend
 title: "Our Journey toward SaaS Customization and Extensibility at Auth0"
-description: ""
+description: "Learn about how Auth0 empowered field engineers and our customers to work on last mile solutions needed for successful implementations."
 date: 2017-12-11 10:00
 category: Extend, Business
 author:
@@ -22,11 +22,12 @@ related:
   - 2017-05-19-serverless-webhooks-with-auth0-extend
   - 2017-08-22-for-the-best-security-think-beyond-webhooks
 ---
-Previously, we wrote about the emerging pattern of [Serverless Extensibility](https://auth0.com/blog/why-is-serverless-extensibility-better-than-webhooks/). Examples of the concept are popping up in many of the services you use daily like [Twilio](https://www.twilio.com/functions) and here at [Auth0](https://auth0.com/).
 
 How did Auth0 get to the point of offering extensibility through a serverless platform? While not rocket science, it has been a four-year journey that predates both [Amazon Lambda](https://aws.amazon.com/lambda/) and the term Serverless. Like all innovation, it starts with resource constraints, the need to give customers the features they wanted and making sales.
 
-## The problem we were trying to solve
+Previously, we wrote about the emerging pattern of [Serverless Extensibility](https://auth0.com/blog/why-is-serverless-extensibility-better-than-webhooks/). Examples of the concept are popping up in many of the services you use daily like [Twilio](https://www.twilio.com/functions) and here at [Auth0](https://auth0.com/). In this post, we will go into details of the real need proposed by our customers and how we went about empowering them to customize our product to their needs.
+
+## The problem
 
 ![NASA Engineers working on MAVEN](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/engineers_working_on_the_high-gain_antenna_of_the_MAVEN_spacecraft.jpg)
 
@@ -41,7 +42,7 @@ Our customer's focus was on the authentication transaction. A lot of interesting
 - Authorization
 - Claims Transformation
 
-The possibilities are endless. We could not possibly build every feature at once.
+Customers will come up with an unlimited supply of feature requests. We could not possibly build every feature at once.
 
 Moreover, sometimes building features into the core product for customers is not the right approach. We needed a way to try ideas out. An idea may sound great, but in practice be problematic. Investing core engineering resources to these ideas is very expensive.
 
@@ -58,14 +59,14 @@ For example, we had customers who wanted to do profile enrichment. They used ser
 
 *[NASA](https://www.flickr.com/photos/gsfc/34827899312) licensed under [Creative Commons 2.0](https://creativecommons.org/licenses/by/2.0/)*
 
-The inspiration for custom code extensibility as a solution came from spreadsheets. Excel has significant functionality out of the box, but there is always a function, macro or calculation that is not available. However, you can write them yourself directly in Excel removing the dependency on Microsoft engineers.
+To solve this problem, we introduced a method of adding custom code into the platform that could be defined by customers. The inspiration for custom code extensibility as a solution came from spreadsheets. Excel has significant functionality out of the box, but you can always add a function, macro or calculation that better reflects your goal. However, you can write them yourself directly in Excel removing the dependency on Microsoft engineers.
 
 > **"We wanted a similar experience for our users. A user should be able to log in to the dashboard, write a small amount of node.js code that executes later during authorization transactions."**<br />
 > Eugenio Pace - Co-Founder, VP Customer Success
 
 Like Excel, we wanted to offer users a really simple experience for customizing our product through code. We believed a user should be able to write their logic in an editor, debug it in place, and make it live in production, all without having to stand up a service. This differed from the prevalent approach at the time for dealing with customization through webhooks, which were hosted by the user.
 
-We quickly implemeted an MVP that had some issues, primarily a lack of security. It was merely creating a process boundary between the core Auth0 stack and the customer's code. It primarily prevented well behaved, well-intentioned code from accidentally bringing down the authorization service or other sandboxed code. It was not preventing malicious code from accessing things it should not or corrupting the environment.
+We quickly implemented an MVP to prove out the concept. It created a process boundary between the core Auth0 stack and the customer's code. It primarily prevented well behaved, well-intentioned code from accidentally bringing down the authorization service or other sandboxed code.
 
 Although the MVP had its limitations, it proved that the user experience for customization could be greatly improved, aligning well with our philosophy of "Identity made simple for developers."
 
@@ -74,6 +75,8 @@ Although the MVP had its limitations, it proved that the user experience for cus
 ![NASA engineers cleaning mirror with carbon dioxide snow](https://cdn.auth0.com/website/blog/extend/why-auth0-chose-serverless-extensibility/17402277412_5e2834517c_k.jpg)
 
 *[NASA](https://www.flickr.com/photos/gsfc/17402277412) licensed under [Creative Commons 2.0](https://creativecommons.org/licenses/by/2.0/)*
+
+Custom code extensibility is exposed in our customer dashboard in three ways: Auth0 Rules, Hooks, and Extensions.
 
 **[Auth0 Rules](https://auth0.com/docs/rules/current)** were the first publically available use case where our customers could easily add custom functionality to their authorization flow directly in the dashboard. Rules execute after authentication but before authorization. We offer a gallery of Rule templates that make it easy for customers to address common scenarios out of the box. Because Rules are code though, customers can easily customize the logic further to meet their specific needs.
 
@@ -133,13 +136,13 @@ It is a level of success that makes us feel like rocket scientists sometimes. We
 
 Serverless Extensibility is a logical evolution to Webhooks. It has taken us four years of experimentation and refinement, and the resulting Webtasks platform is a success that empowers our field engineers to close deals, simplifies our core architecture and delight our customers.
 
-We have created a product called [Auth0 Extend](https://auth0.com/extend/) based on the pattern that allows other SaaS companies to offer serverless extensibility from their products quickly.
+From our learnings, we have created a product called [Auth0 Extend](https://auth0.com/extend/) based on the pattern that allows other SaaS companies to offer serverless extensibility from their products quickly.
 
 When [Jeff Lindsay](https://twitter.com/progrium) was introduced to Extend he certainly felt we were on to something. Jeff was the person who coined the phrase [Webhook](http://progrium.com/blog/2007/05/03/web-hooks-to-revolutionize-the-web/), which has become ubiquitous on the web as a way to offer extension points from applications online.
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">This was the whole point of pushing webhooks in 2007. Literally built this as a prototype. <a href="https://t.co/Wyoz0qXO9P">https://t.co/Wyoz0qXO9P</a></p>&mdash; Jeff Lindsay (@progrium) <a href="https://twitter.com/progrium/status/864588610858881029?ref_src=twsrc%5Etfw">May 16, 2017</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-If you are interested in giving it a [try](https://auth0.com/extend/try?umt_source=extend_blog&umt_medium=utility-bar-try&umt_campaign=extend_blog), you can start today for free. Feel free to [contact us](https://auth0.com/extend/#support) if you have any questions.
+If you are interested in giving it a [try](https://auth0.com/extend/try?umt_source=extend_blog&umt_medium=utility-bar-try&umt_campaign=extend_blog), you can start today for free. Explore giving your field engineers and customers the power to customize your SaaS. You two can implement those last-mile solutions that delight your customers quickly and easily. Feel free to [contact us](https://auth0.com/extend/#support) if you have any questions.
 
 I would like to thank [Eugenio Pace](https://twitter.com/eugenio_pace), [Sandrino Di Mattia](https://twitter.com/sandrinodm) and [Tomasz Janczuk](https://twitter.com/tjanczuk) for taking time out of their busy schedules to be interviewed for this post.
